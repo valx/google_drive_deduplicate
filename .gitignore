@@ -3,7 +3,9 @@ __pycache__
 token.pickle
 credentials.json
 
+pyvenv.cfg
 build
 Include
 Lib
 Scripts
+venv
