@@ -1,5 +1,5 @@
 # google_drive_deduplicate
-A collection of scripts to detect and remove duplicate files across your Google Drive account
+A collection of Python scripts to detect and remove duplicate files across your Google Drive account
 
 ## Intro
 The script is based on the Example of Google Drive API quickstart (https://developers.google.com/drive/api/v3/quickstart/python)  
