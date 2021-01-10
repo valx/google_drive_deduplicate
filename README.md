@@ -7,9 +7,13 @@ The script is based on the Example of Google Drive API quickstart (https://devel
 The script browses across your drive account to find duplicated (based on md5 checksum of each file).
 It ignores file in Trash bin of the Google Drive.
 
+# Prerequisites
+1. Python 2.6 or greater
+1. Required libraries installed (as listed in file `requirements.txt`)
+
 ## Usage
-1. Follow prerequisistes and steps 1 and 2 at https://developers.google.com/drive/api/v3/quickstart/python (create a `credentials.json` file and install python libraries in `requirements.txt`)
-1. run: `python .\gdrivededup.py`
+1. Create a `credentials.json` file in the project folder (see steps 1 at https://developers.google.com/drive/api/v3/quickstart/python)
+1. Run: `python .\gdrivededup.py`
 1. On the first execution the script will require you to login, the token will be saved as `token.pickle` (please ensure this file is kept/removed safely)
 1. On success, the script will prompt a list of dictionaries with information for each duplicated file (if none, no output)
 
