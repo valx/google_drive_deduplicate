@@ -14,7 +14,7 @@ It ignores file in Trash bin of the Google Drive.
 1. On success, the script will prompt a list of dictionaries with information for each duplicated file (if none, no output)
 
 ## TODO
-This is currently work in progress. Improvments:
+Potential Improvements for this repo:
 1. save the list as a csv file
 1. document python file
 2. package into an executable file
