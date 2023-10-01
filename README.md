@@ -13,6 +13,7 @@ It ignores file in Trash bin of the Google Drive.
 
 ## Usage
 1. Create a `credentials.json` file in the project folder (see step 1 at https://developers.google.com/drive/api/v3/quickstart/python)
+1. Create a `config.json` file in the project folder (based on cofig.example.json)
 1. Run: `python .\gdrivededup.py`
 1. On the first execution the script will require you to login, the token will be saved as `token.pickle` (please ensure this file is kept/removed safely)
 1. On success, the script will prompt a list of dictionaries with information for each duplicated file (if none, no output)

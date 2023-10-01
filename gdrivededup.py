@@ -1,6 +1,7 @@
 from __future__ import print_function
 import pickle
 import os.path
+import json
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -33,15 +34,26 @@ def main():
     service = build('drive', 'v3', credentials=creds)
 
     # Call the Drive v3 API
-    l_properties = ["id", "name", "size","md5Checksum", "parents", "webViewLink", "trashed"]
+    l_properties = ["id", "name", "size","md5Checksum", "parents", "webViewLink", "trashed", "owners"]
     props = ','.join(l_properties)
-    d_dup_items = {}
-    l_dup = []
+
+    # key of 
     dup_key = 'md5Checksum'
+    # dictionary with information for each processed item, the key is the dup_key (i.e. the md5checksum)
+    d_items = {}
+    # list of duplicated items keys
+    l_dup = []
+
+    # read config json
+    f = open('config.json')
+    config = json.load(f)
 
     results = service.files().list(
         pageSize=100, fields=f"nextPageToken, files({props})").execute()
+    # page token
     pt = results['nextPageToken']  
+    counter = 0
+
     while pt is not None:
         if 'nextPageToken' in results:
             pt = results['nextPageToken']
@@ -55,21 +67,41 @@ def main():
             pt = None
         else:
             for item in items:
-                if dup_key in item and item['trashed'] is False and 'size' in item and int(item['size'])>1000:
-                    k = item[dup_key]
-                    if k in d_dup_items.keys():
-                        l_dup += [k]
-                        print('DUP:', item)
-                    d_dup_items[k] = d_dup_items.get(k, []) + [item]
-            #for item in items:
-            #    print([item[prop] for prop in l_properties if prop in item])
+                counter += 1
+                if counter%500 == 0:
+                    print("Processed:", counter)
+                
+                # ignore deleted items, ignore small files, only consider files owner by current user
+                if  dup_key in item \
+                    and item['trashed'] is False \
+                    and 'size' in item  and int(item['size'])>1000 \
+                    and item['owners'][0]['emailAddress']==config['owner_email']:
+                        
+                        k = item[dup_key]
+                        # if the md5-checksum already exists, add key to list of duplicates
+                        if k in d_items.keys():
+                            # add item key to duplicated list
+                            l_dup += [k]
+                            #print('DUP:', item)
+                        d_items[k] = d_items.get(k, []) + [item]
+            
+                # # print debugging info
+                # if counter == 1: #for item in items:
+                #      print({prop: item[prop] for prop in l_properties if prop in item})
+                #      print(item['owners'][0]['emailAddress'])
+                #      exit()
+
             results = service.files().list(
                 pageToken=pt,
                 pageSize=100, fields=f"nextPageToken, files({props})").execute()
                 
     l_dup = list(set(l_dup))
+    print('Files found:', counter)
+    print('Duplicates found:',len(l_dup))
+
+    # print duplicated items data
     for s in l_dup:
-        print(d_dup_items[s])
+        print(d_items[s])
 
 if __name__ == '__main__':
     main()
